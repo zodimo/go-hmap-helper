@@ -1,50 +1,32 @@
 package hmap
 
 import (
+	"go-hmap/pkg/hmap/result"
 	"reflect"
 )
 
-type HMapKey[T any] = string
+func FMap[IN, OUT any](h map[string]any, key string, f func(IN) result.HMapResult[OUT]) result.HMapResult[OUT] {
 
-type HMap[T any] interface {
-	GetWithKey(key HMapKey[T]) HMapResult[T]
-	Unwrap() map[string]any
+	v := Get[IN](h, key)
+	if !v.Ok() {
+		return result.NewMapErrorResult[OUT](v.Err())
+	}
+
+	return result.FMap[IN, OUT](v, f)
 }
 
-var _ HMap[any] = &hmap[any]{}
-
-type hmap[T any] struct {
-	m map[string]any
-}
-
-func (h *hmap[T]) GetWithKey(key HMapKey[T]) HMapResult[T] {
-	v, ok := h.m[string(key)]
+func Get[T any](h map[string]any, key string) result.HMapResult[T] {
+	v, ok := h[key]
 	if !ok {
-		return NewMapErrorResult[T](NewNotFoundMapError(key))
+		return result.NewMapErrorResult[T](NewNotFoundMapError(key))
 	}
 
 	typedV, ok := v.(T)
 	if !ok {
-		return NewMapErrorResult[T](NewInvalidTypeMapError(reflect.TypeOf(new(T)).String(), reflect.TypeOf(v).String()))
+		return result.NewMapErrorResult[T](NewInvalidTypeMapError(reflect.TypeOf(new(T)).String(), reflect.TypeOf(v).String()))
 	}
 
-	return NewMapValidResult(typedV)
+	return result.NewMapValidResult(typedV)
 }
 
-func (h *hmap[T]) Unwrap() map[string]any {
-	return h.m
-}
-
-func FMap[IN, OUT any](h HMap[any], key string, f func(IN) HMapResult[OUT]) HMapResult[OUT] {
-
-	v, ok := h.Unwrap()[key]
-	if !ok {
-		return NewMapErrorResult[OUT](NewNotFoundMapError(key))
-	}
-	typedV, ok := v.(IN)
-	if !ok {
-		return NewMapErrorResult[OUT](NewInvalidTypeMapError(reflect.TypeOf(new(IN)).String(), reflect.TypeOf(v).String()))
-	}
-
-	return f(typedV)
-}
+// to set it, you can do whatever you want

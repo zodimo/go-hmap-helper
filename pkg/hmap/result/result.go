@@ -1,4 +1,4 @@
-package hmap
+package result
 
 type HMapResult[T any] struct {
 	value T
@@ -44,4 +44,12 @@ func (r HMapResult[T]) Ok() bool {
 
 func (r HMapResult[T]) Err() error {
 	return r.err
+}
+
+func FMap[IN, OUT any](r HMapResult[IN], f func(IN) HMapResult[OUT]) HMapResult[OUT] {
+	if !r.ok {
+		return NewMapErrorResult[OUT](r.err)
+	}
+
+	return f(r.value)
 }
