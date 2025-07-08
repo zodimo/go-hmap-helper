@@ -20,47 +20,91 @@ go get github.com/zodimo/go-hmap-helper
 ### Basic Extraction
 
 ```go
-import "github.com/zodimo/go-hmap-helper/hmap"
+package main
 
-h := map[string]any{"foo": 42}
-res := hmap.Get[int](h, "foo")
-if res.Ok() {
-    v, _ := res.Value()
-    fmt.Println(v) // 42
-} else {
-    fmt.Println("Error:", res.Err())
+import (
+	"fmt"
+
+	"github.com/zodimo/go-hmap-helper/hmap"
+)
+
+func main() {
+	h := map[string]any{"foo": 42}
+	res := hmap.Get[int](h, "foo")
+	if res.Ok() {
+		v, _ := res.Value()
+		fmt.Println(v) // 42
+	} else {
+		fmt.Println("Error:", res.Err())
+	}
 }
+
 ```
 
 ### Handling Missing Keys
 
 ```go
-res := hmap.Get[int](h, "bar")
-if !res.Ok() {
-    // res.Err() will be HMapKeyNotFoundError
-    fmt.Println(res.Err())
+package main
+
+import (
+	"fmt"
+
+	"github.com/zodimo/go-hmap-helper/hmap"
+)
+
+func main() {
+	h := map[string]any{"foo": 42}
+	res := hmap.Get[int](h, "bar")
+	if !res.Ok() {
+		// res.Err() will be HMapKeyNotFoundError
+		fmt.Println(res.Err())
+	}
 }
+
 ```
 
 ### Handling Type Errors
 
 ```go
-h := map[string]any{"foo": "not-an-int"}
-res := hmap.Get[int](h, "foo")
-if !res.Ok() {
-    // res.Err() will be HMapInvalidTypeError
-    fmt.Println(res.Err())
+package main
+
+import (
+	"fmt"
+
+	"github.com/zodimo/go-hmap-helper/hmap"
+)
+
+func main() {
+	h := map[string]any{"foo": "not-an-int"}
+	res := hmap.Get[int](h, "foo")
+	if !res.Ok() {
+		// res.Err() will be HMapInvalidTypeError
+		fmt.Println(res.Err())
+	}
 }
+
 ```
 
 ### Functional Mapping with FMap
 
 ```go
-f := func(x int) hmap.result.HMapResult[int] { return hmap.result.NewMapValidResult(x * 10) }
-res := hmap.FMap[int, int](h, "foo", f)
-if res.Ok() {
-    v, _ := res.Value()
-    fmt.Println(v) // 20 if h["foo"] == 2
+package main
+
+import (
+	"fmt"
+
+	"github.com/zodimo/go-hmap-helper/hmap"
+	"github.com/zodimo/go-hmap-helper/hmap/result"
+)
+
+func main() {
+	h := map[string]any{"foo": 42}
+	f := func(x int) result.HMapResult[int] { return result.NewMapValidResult(x * 10) }
+	res := hmap.FMap[int, int](h, "foo", f)
+	if res.Ok() {
+		v, _ := res.Value()
+		fmt.Println(v) // 420 if h["foo"] == 42
+	}
 }
 ```
 

@@ -10,7 +10,7 @@ type HMapKeyNotFoundError struct {
 }
 
 func (e HMapKeyNotFoundError) Error() string {
-	return fmt.Sprintf("Key does not exist in the map: %s", e.Key)
+	return fmt.Sprintf("key[%s] does not exist in the map", e.Key)
 }
 
 type HMapInvalidTypeError struct {
