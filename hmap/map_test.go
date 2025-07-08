@@ -1,8 +1,9 @@
 package hmap
 
 import (
-	"go-hmap/pkg/hmap/result"
 	"testing"
+
+	"github.com/zodimo/go-hmap-helper/hmap/result"
 )
 
 func TestGet_Valid(t *testing.T) {

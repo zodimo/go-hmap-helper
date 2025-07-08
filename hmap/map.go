@@ -1,8 +1,9 @@
 package hmap
 
 import (
-	"go-hmap/pkg/hmap/result"
 	"reflect"
+
+	"github.com/zodimo/go-hmap-helper/hmap/result"
 )
 
 func FMap[IN, OUT any](h map[string]any, key string, f func(IN) result.HMapResult[OUT]) result.HMapResult[OUT] {
