@@ -22,8 +22,8 @@ func (e HMapInvalidTypeError) Error() string {
 	return fmt.Sprintf("invalid type, expected %s but got %s", e.ExpectedType, e.ActualType)
 }
 
-func NewNotFoundMapError(key string) HMapKeyNotFoundError {
-	return HMapKeyNotFoundError{Key: key}
+func NewNotFoundMapError[KEY ~string](key KEY) HMapKeyNotFoundError {
+	return HMapKeyNotFoundError{Key: string(key)}
 }
 
 func NewInvalidTypeMapError(expectedType string, actualType string) HMapInvalidTypeError {

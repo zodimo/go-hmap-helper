@@ -16,10 +16,10 @@ func FMap[IN, OUT any](h map[string]any, key string, f func(IN) result.HMapResul
 	return result.FMap[IN, OUT](v, f)
 }
 
-func Get[T any](h map[string]any, key string) result.HMapResult[T] {
+func Get[T any, KEY ~string](h map[KEY]any, key KEY) result.HMapResult[T] {
 	v, ok := h[key]
 	if !ok {
-		return result.NewMapErrorResult[T](NewNotFoundMapError(key))
+		return result.NewMapErrorResult[T](NewNotFoundMapError[KEY](key))
 	}
 
 	typedV, ok := v.(T)
