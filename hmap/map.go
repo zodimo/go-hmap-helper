@@ -30,4 +30,18 @@ func Get[T any, KEY ~string](h map[KEY]any, key KEY) result.HMapResult[T] {
 	return result.NewMapValidResult(typedV)
 }
 
+func GetOrElse[T any, KEY ~string](h map[KEY]any, key KEY, defaultValue T) result.HMapResult[T] {
+	v, ok := h[key]
+	if !ok {
+		return result.NewMapValidResult(defaultValue)
+	}
+
+	typedV, ok := v.(T)
+	if !ok {
+		return result.NewMapErrorResult[T](NewInvalidTypeMapError(reflect.TypeOf(new(T)).String(), reflect.TypeOf(v).String()))
+	}
+
+	return result.NewMapValidResult(typedV)
+}
+
 // to set it, you can do whatever you want

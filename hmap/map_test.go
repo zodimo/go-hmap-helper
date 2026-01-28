@@ -95,3 +95,40 @@ func TestFMap_InvalidType(t *testing.T) {
 		t.Errorf("Expected HMapInvalidTypeError, got %T", res.Err())
 	}
 }
+
+func TestGetOrElse_Found(t *testing.T) {
+	h := map[string]any{"foo": 42}
+	res := GetOrElse[int](h, "foo", 100)
+	if !res.Ok() {
+		t.Fatalf("expected Ok, got error: %v", res.Err())
+	}
+	v, _ := res.Value()
+	if v != 42 {
+		t.Errorf("expected 42, got %v", v)
+	}
+}
+
+func TestGetOrElse_NotFound(t *testing.T) {
+	h := map[string]any{"foo": 42}
+
+	res := GetOrElse[int](h, "bar", 100)
+	if !res.Ok() {
+		t.Fatalf("expected Ok, got error: %v", res.Err())
+	}
+	v, _ := res.Value()
+	if v != 100 {
+		t.Errorf("expected 100, got %v", v)
+	}
+}
+
+func TestGetOrElse_InvalidType(t *testing.T) {
+	h := map[string]any{"foo": "not-an-int"}
+	res := GetOrElse[int](h, "foo", 100)
+	if res.Ok() {
+		t.Fatalf("expected not Ok for invalid type")
+	}
+	_, ok := res.Err().(HMapInvalidTypeError)
+	if !ok {
+		t.Errorf("Expected HMapInvalidTypeError, got %T", res.Err())
+	}
+}
