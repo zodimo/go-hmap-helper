@@ -1,4 +1,4 @@
-# go-typed-maps/hmap
+# go-hmap-helper
 A collection of generic, type-safe helpers for working with Go maps using string keys and `any` values. This package provides robust error handling and functional-style utilities for extracting and transforming values from maps, with a focus on type safety and composability.
 
 ## Features
@@ -113,6 +113,9 @@ func main() {
 ### `Get[T any](h map[string]any, key string) HMapResult[T]`
 Safely extract a value of type `T` from the map. Returns a result type that can be checked for success or error.
 
+### `GetOrElse[T any](h map[string]any, key string, defaultValue T) HMapResult[T]`
+Safely extract a value of type `T` from the map. Returns `defaultValue` if the key is missing. Returns an error if the type matches are invalid.
+
 ### `FMap[IN, OUT any](h map[string]any, key string, f func(IN) HMapResult[OUT]) HMapResult[OUT]`
 Extracts a value and applies a function to it if successful, returning a new result.
 
@@ -137,4 +140,4 @@ go test ./...
 
 ## License
 
-MIT 
+See [LICENSE](LICENSE) 
